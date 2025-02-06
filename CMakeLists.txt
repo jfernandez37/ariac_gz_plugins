@@ -4,6 +4,7 @@ project(ariac_gz_plugins)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
+  ament_index_cpp
   gz-plugin2
   gz-cmake3
   gz-sim8

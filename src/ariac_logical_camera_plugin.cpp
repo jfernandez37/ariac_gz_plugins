@@ -132,7 +132,6 @@ namespace ariac_sensors{
   }
 
   void AriacLogicalCameraPluginPrivate::OnNewLogicalFrame(const gz::msgs::LogicalCameraImage &_gz_msg) {    
-    RCLCPP_INFO(ros_node_->get_logger(), "inside onnewlogicalframe");
     if (!publish_sensor_data_) {
       return;
     }
@@ -148,12 +147,9 @@ namespace ariac_sensors{
     for (int i = 0; i < _gz_msg.model_size(); i++) {
       const auto & lc_model = _gz_msg.model(i);
       std::string name = lc_model.name();   
-      RCLCPP_INFO_STREAM(ros_node_->get_logger(), "lc_model name" << name);
 
       if (name.find("s2l2_kit_tray") == 0 || name.find("m2l1_kit_tray") == 0) {
           aprs_interfaces::msg::Tray kit_tray;
-
-          RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Pub kit tray: " << name);
 
           kit_tray.name = name;
           if (name.find("s2l2") != std::string::npos){
@@ -172,7 +168,6 @@ namespace ariac_sensors{
       else if (name.find("small_gear_tray") == 0 || name.find("medium_gear_tray") == 0 || name.find("large_gear_tray") == 0) {
         aprs_interfaces::msg::Tray gear_tray;
 
-        RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Pub gear tray: " << name);
 
         gear_tray.name = name;
 
@@ -194,7 +189,6 @@ namespace ariac_sensors{
       else if (name.find("gear") != std::string::npos){
         aprs_interfaces::msg::SlotInfo gear;
 
-        RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Pub gear: " << name);
 
         gear.name = name;
 
@@ -254,15 +248,11 @@ namespace ariac_sensors{
     //   basic_image_pub_->publish(*basic_image_msg_);
     // }
     if (camera_type_ == "advanced") {
-      RCLCPP_INFO(ros_node_->get_logger(), "INSIDE IF");
       for (int i =0; i < kit_trays.size(); i++){
         for (aprs_interfaces::msg::SlotInfo gear : gears){
-          RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Names: " << gear.name << "\t" << kit_trays[i].name);
           if (gear.name.find(kit_trays[i].name) != std::string::npos){
-            RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Match: " << gear.name << "\t" << kit_trays[i].name);
             kit_trays[i].slots.push_back(gear);
           }
-          RCLCPP_INFO_STREAM(ros_node_->get_logger(), "Length: " << kit_trays[i].slots.size());
         }
       }
 
@@ -273,8 +263,6 @@ namespace ariac_sensors{
           }
         }
       }
-
-      RCLCPP_INFO(ros_node_->get_logger(), "After for loops");
 
       advanced_image_msg_->sensor_pose = sensor_pose;
 
