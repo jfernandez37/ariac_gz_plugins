@@ -41,7 +41,7 @@
           </depth_camera>
           <clip>
             <near>0.2</near>
-            <far>1.1</far>
+            <far>11</far>
           </clip>
           <noise>
             <type>gaussian</type>
@@ -56,6 +56,7 @@
           <rgb_img_ros_topic>/ariac/sensors/rgbd_camera/rgb_image</rgb_img_ros_topic>
           <depth_img_ros_topic>/ariac/sensors/rgbd_camera/depth_image</depth_img_ros_topic>
           <cam_info_ros_topic>/ariac/sensors/rgbd_camera/camera_info</cam_info_ros_topic>
+          <camera_name>rgbd_camera</camera_name>
         </plugin>
       </sensor>
     </link>
