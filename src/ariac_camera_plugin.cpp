@@ -5,6 +5,8 @@
 
 #include <ros_gz_bridge/convert.hpp>
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
 #include <sensor_msgs/msg/image.hpp>
 #include <ariac_msgs/msg/sensors.hpp>
 
@@ -50,10 +52,19 @@ namespace ariac_sensors{
                       gz::sim::EventManager &_event_mgr) 
   {
     // Set up ros publisher
-    if (!rclcpp::ok()) {
-      rclcpp::init(0, nullptr);
+        std::vector<std::string> arguments = {"--ros-args"};
+    arguments.push_back(RCL_PARAM_FILE_FLAG);
+    arguments.push_back(ament_index_cpp::get_package_share_directory("aprs_description")+"/config/robot_controllers.yaml");
+    std::vector<const char *> argv;
+    for (const auto & arg : arguments) {
+      argv.push_back(reinterpret_cast<const char *>(arg.data()));
     }
-    impl_->ros_node_ = rclcpp::Node::make_shared("ariac_camera_plugin_node");
+    
+    if (!rclcpp::ok()){
+      rclcpp::init(static_cast<int>(argv.size()), argv.data());
+    }
+
+    impl_->ros_node_ = rclcpp::Node::make_shared(_sdf->Get<std::string>("camera_name")+"_node");
     impl_->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     impl_->executor_->add_node(impl_->ros_node_);
     auto spin = [this]()
@@ -64,7 +75,7 @@ namespace ariac_sensors{
       };
     impl_->thread_executor_spin_ = std::thread(spin);
 
-    impl_->publish_sensor_data_ = false;
+    impl_->publish_sensor_data_ = true;
     impl_->image_pub_ = impl_->ros_node_->create_publisher<sensor_msgs::msg::Image>(
       _sdf->Get<std::string>("rgb_img_ros_topic"), 10);
 
@@ -74,13 +85,13 @@ namespace ariac_sensors{
       impl_->cam_info_gz_topic_ = _sdf->Get<std::string>("cam_info_gz_topic");
     } else if (impl_->camera_type_ == "rgbd") {
       impl_->gz_topic_ = _sdf->Get<std::string>("gz_topic") + "/image";
-      impl_->gz_topic_depth_ = _sdf->Get<std::string>("gz_topic") + "/depth_image]";
+      impl_->gz_topic_depth_ = _sdf->Get<std::string>("gz_topic") + "/depth_image";
       impl_->cam_info_gz_topic_ = _sdf->Get<std::string>("gz_topic") + "/camera_info";
       impl_->depth_image_pub_ = impl_->ros_node_->create_publisher<sensor_msgs::msg::Image>(
         _sdf->Get<std::string>("depth_img_ros_topic"), 10);
     }
 
-    // Set up gz subscriber
+    // // Set up gz subscriber
     impl_->gz_node_ = std::make_shared<gz::transport::Node>();
     impl_->gz_node_->Subscribe(impl_->gz_topic_, &AriacCameraPluginPrivate::OnNewImageFrame, impl_.get());
     impl_->gz_node_->Subscribe(impl_->cam_info_gz_topic_, &AriacCameraPluginPrivate::FillCameraInfoMsg, impl_.get());

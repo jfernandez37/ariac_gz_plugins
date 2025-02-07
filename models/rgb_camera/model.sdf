@@ -35,7 +35,7 @@
           </image>
           <clip>
             <near>0.2</near>
-            <far>1.1</far>
+            <far>11</far>
           </clip>
           <noise>
             <type>gaussian</type>
@@ -50,6 +50,7 @@
           <rgb_img_ros_topic>/ariac/sensors/rgb_camera/rgb_image</rgb_img_ros_topic>
           <cam_info_ros_topic>/ariac/sensors/rgb_camera/camera_info</cam_info_ros_topic>
           <cam_info_gz_topic>gz_topic_rgb_cam_info</cam_info_gz_topic>
+          <camera_name>rgb_camera</camera_name>
         </plugin>
 
       </sensor>
