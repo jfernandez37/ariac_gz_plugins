@@ -14,6 +14,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ros_gz_bridge
   ariac_msgs
   aprs_interfaces
+  std_srvs
 )
 
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
@@ -49,6 +50,16 @@ ament_target_dependencies(AriacRayPlugin
 )
 ament_export_libraries(AriacRayPlugin)
 install(TARGETS AriacRayPlugin
+        DESTINATION lib/${PROJECT_NAME}
+)
+
+add_library(VacuumGripperPlugin SHARED src/vacuum_gripper_plugin.cpp)
+target_include_directories(VacuumGripperPlugin PUBLIC include)
+ament_target_dependencies(VacuumGripperPlugin
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
+ament_export_libraries(VacuumGripperPlugin)
+install(TARGETS VacuumGripperPlugin
         DESTINATION lib/${PROJECT_NAME}
 )
 
